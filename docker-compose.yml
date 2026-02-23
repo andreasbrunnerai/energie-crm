@@ -1,0 +1,24 @@
+
+**docker-compose.yml (Haupt-Startdatei):**
+```yaml
+version: '3.8'
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: energie_crm
+      POSTGRES_PASSWORD: crm2026
+    ports: ["5432:5432"]
+    volumes: ['./backend/migrations:/docker-entrypoint-initdb.d']
+
+  crm-api:
+    build: ./backend
+    ports: ["8080:8080"]
+    depends_on: [postgres]
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres/energie_crm
+
+  frontend:
+    build: ./frontend
+    ports: ["3000:3000"]
+    depends_on: [crm-api]
